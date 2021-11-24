@@ -14,10 +14,22 @@ class Game extends React.Component {
     const tiles = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15];
     for (let i = 0; i < tiles.length; i++) {
       const randomIndex = Math.floor(Math.random() * tiles.length);
-      [tiles[i], tiles[randomIndex]] = [tiles[randomIndex], tiles[i]]
+      [tiles[i], tiles[randomIndex]] = [tiles[randomIndex], tiles[i]];
     }
-    tiles.push(0);
-    return tiles;
+    if (this.isSolvable(tiles)) {
+      tiles.push(0);
+      return tiles;
+    } else {
+      return this.newTilesSet();
+    }
+
+  }
+  isSolvable(set) {
+    let result = 0;
+    for (let i = 1; i < set.length; i++) {
+      if (set[i] < set[i - 1]) result++;
+    }
+    return (result % 2) == 0;
   }
   render() {
     const className = "board";
