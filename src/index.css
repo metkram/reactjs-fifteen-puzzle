@@ -21,6 +21,15 @@ body {
   text-align: center;
 }
 
+.noselect {
+  -webkit-touch-callout: none;
+    -webkit-user-select: none;
+     -khtml-user-select: none;
+       -moz-user-select: none;
+        -ms-user-select: none;
+            user-select: none;
+}
+
 .number {
   line-height: 130px;
   height: 130px;
