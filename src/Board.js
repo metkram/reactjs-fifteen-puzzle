@@ -4,14 +4,17 @@ import Tile from "./Tile";
 class Board extends React.Component {
   createTile(number) {
     return(
-      <Tile number={number} />
+      <Tile value={number} />
     );
   }
-  
+
   fillBoard(tiles) {
     return tiles.map(tile => {
-      const className = "tile noselect";
-      return <div key={tile} className={className}>{this.createTile(tile)}</div>;
+      const tileClasses = "tile noselect";
+      const zeroTileClasses = "zerotile noselect";
+      return <div key={tile} className={tile == 0 ? zeroTileClasses : tileClasses}onMouseDown={() => this.props.handleClick(tile)}>
+               {this.createTile(tile)}
+             </div>;
     });
   }
 

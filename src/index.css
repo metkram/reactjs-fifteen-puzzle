@@ -21,6 +21,19 @@ body {
   text-align: center;
 }
 
+.zerotile {
+  width: 130px;
+  height: 130px;
+  border: 1px solid #dcdcdc;
+  border-radius: 25%;
+  margin: 8px;
+  padding: 0;
+  float: left;
+  font-size: 0;
+  background-color: #f5f5f5;
+  text-align: center;
+}
+
 .noselect {
   -webkit-touch-callout: none;
     -webkit-user-select: none;
