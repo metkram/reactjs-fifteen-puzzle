@@ -8,6 +8,7 @@ class Game extends React.Component {
     super(props);
     this.state = {
       tiles: this.newTilesSet(),
+      isSolved: false,
     };
     this.handleClick = this.handleClick.bind(this);
   }
@@ -49,6 +50,8 @@ class Game extends React.Component {
       [numberSet[zeroPosition], numberSet[numberPosition]] = [numberSet[numberPosition], numberSet[zeroPosition]];
       this.setState({tiles: numberSet});
     }
+
+    if (this.checkWin(numberSet)) this.setState({isSolved: true});
   }
 
   possibleMoves(zero) {
@@ -61,11 +64,20 @@ class Game extends React.Component {
 
     return set.filter(number => number >= 0 && number <= 15);
   }
+
+  checkWin(numberSet) {
+    const winSet = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 0].join();
+    return winSet == numberSet.join();
+  }
+
   render() {
     const className = "board";
     return(
       <div className={className}>
         <Board tiles={this.state.tiles} handleClick={this.handleClick} />
+        <div className={"info"}>
+          {this.state.isSolved ? "You win" : "Keep going"}
+        </div>
       </div>
     );
   }
