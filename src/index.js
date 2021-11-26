@@ -8,9 +8,19 @@ class Game extends React.Component {
     super(props);
     this.state = {
       tiles: this.newTilesSet(),
+      steps: 0,
+      time: 0,
       isSolved: false,
     };
     this.handleClick = this.handleClick.bind(this);
+  }
+
+  componentDidMount() {
+    this.timer = setInterval(() => this.increaseTime(), 1000);
+  }
+
+  componentWillUnmount() {
+    clearInterval(this.timer);
   }
 
   newTilesSet() {
@@ -48,7 +58,7 @@ class Game extends React.Component {
 
     if (this.possibleMoves(zeroPosition).includes(numberPosition)) {
       [numberSet[zeroPosition], numberSet[numberPosition]] = [numberSet[numberPosition], numberSet[zeroPosition]];
-      this.setState({tiles: numberSet});
+      this.setState(state => ({tiles: numberSet, steps: ++state.steps}));
     }
 
     if (this.checkWin(numberSet)) this.setState({isSolved: true});
@@ -70,13 +80,19 @@ class Game extends React.Component {
     return winSet == numberSet.join();
   }
 
+  increaseTime() {
+    if (this.state.steps) {
+      this.setState(state => ({time: state.time + 1}));
+    }
+  }
+
   render() {
     const className = "board";
     return(
       <div className={className}>
         <Board tiles={this.state.tiles} handleClick={this.handleClick} />
         <div className={"info"}>
-          {this.state.isSolved ? "You win" : "Keep going"}
+          {this.state.isSolved ? "You win" : `you have made ${this.state.steps} moves in ${this.state.time} seconds`}
         </div>
       </div>
     );
