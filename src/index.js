@@ -1,6 +1,6 @@
 import React from "react";
 import ReactDOM from "react-dom";
-import Board from "./Board"
+import Board from "./Board";
 import './index.css';
 
 class Game extends React.Component {
@@ -16,11 +16,29 @@ class Game extends React.Component {
   }
 
   componentDidMount() {
+    if (sessionStorage.getItem("stateJson")) {
+      const state = JSON.parse(sessionStorage.getItem("stateJson"));
+      this.setState(state);
+    }
     this.timer = setInterval(() => this.increaseTime(), 1000);
+  }
+
+  componentDidUpdate() {
+    this.saveData();
   }
 
   componentWillUnmount() {
     clearInterval(this.timer);
+  }
+
+  newGame() {
+    const state = {
+      tiles: this.newTilesSet(),
+      steps: 0,
+      time: 0,
+      isSolved: false,
+    };
+    this.setState(state);
   }
 
   newTilesSet() {
@@ -51,6 +69,11 @@ class Game extends React.Component {
     this.changePosition(i);
   }
 
+  saveData() {
+    const state = JSON.stringify(this.state);
+    sessionStorage.setItem("stateJson", state);
+  }
+
   changePosition(number) {
     const numberSet = this.state.tiles.slice();
     const zeroPosition = numberSet.indexOf(0);
@@ -58,7 +81,7 @@ class Game extends React.Component {
 
     if (this.possibleMoves(zeroPosition).includes(numberPosition)) {
       [numberSet[zeroPosition], numberSet[numberPosition]] = [numberSet[numberPosition], numberSet[zeroPosition]];
-      this.setState(state => ({tiles: numberSet, steps: ++state.steps}));
+      this.setState(state => ({tiles: numberSet, steps: state.steps + 1}));
     }
 
     if (this.checkWin(numberSet)) this.setState({isSolved: true});
@@ -93,6 +116,11 @@ class Game extends React.Component {
         <Board tiles={this.state.tiles} handleClick={this.handleClick} />
         <div className={"info"}>
           {this.state.isSolved ? "You win" : `you have made ${this.state.steps} moves in ${this.state.time} seconds`}
+        </div>
+        <div className={"new-game"}>
+          <button onClick={() => this.newGame()}>
+            New game
+          </button>
         </div>
       </div>
     );
