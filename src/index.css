@@ -15,7 +15,7 @@ body {
   width: 130px;
   height: 130px;
   border: 1px solid #87cefa;
-  border-radius: 25%;
+  border-radius: 5%;
   margin: 3px;
   padding: 0;
   float: left;
@@ -28,7 +28,7 @@ body {
   width: 130px;
   height: 130px;
   border: 1px solid #dcdcdc;
-  border-radius: 25%;
+  border-radius: 5%;
   margin: 3px;
   padding: 0;
   float: left;

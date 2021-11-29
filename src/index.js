@@ -55,13 +55,15 @@ class Game extends React.Component {
       tiles.push(0);
       return tiles;
     } else {
+      console.log(tiles);
       return this.newTilesSet();
     }
   }
 
   isSolvable(set) {
     let result = 0;
-    for (let i = 1; i < set.length; i++) {
+    let newSet = [...set.slice(0, 4), ...set.slice(4, 8).reverse(), ...set.slice(8, 12), ...set.slice(12).reverse()];
+    for (let i = 1; i < newSet.length; i++) {
       if (set[i] < set[i - 1]) result++;
     }
     return (result % 2) == 0;
