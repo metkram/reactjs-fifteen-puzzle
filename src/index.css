@@ -1,24 +1,27 @@
 body {
   margin: 0;
+  background-color: #fffafa;
 }
 
 .board {
-  width: 600px;
-  height: 650px;
-  border: 1px solid #000;
+  width: 546px;
+  height: 644px;
+  border: 1px solid #87cefa;
   margin: auto;
+  background-color: #e0ffff;
 }
 
 .tile {
   width: 130px;
   height: 130px;
-  border: 1px solid #000;
+  border: 1px solid #87cefa;
   border-radius: 25%;
-  margin: 8px;
+  margin: 3px;
   padding: 0;
   float: left;
   font-size: 72px;
   text-align: center;
+  background-color: #afeeee;
 }
 
 .zerotile {
@@ -26,7 +29,7 @@ body {
   height: 130px;
   border: 1px solid #dcdcdc;
   border-radius: 25%;
-  margin: 8px;
+  margin: 3px;
   padding: 0;
   float: left;
   font-size: 0;
@@ -51,5 +54,18 @@ body {
 
 .info {
   font-size: 30px;
+  text-align: center;
+}
+
+.tiles {
+  width: 100%;
+  height: 554px;
+  border-top: thick double #87cefa;
+  border-bottom: thick double #87cefa;
+  background-color: #f5f8ff;
+}
+
+.buttons {
+  padding: 3px;
   text-align: center;
 }

@@ -1,6 +1,8 @@
 import React from "react";
 import ReactDOM from "react-dom";
 import Board from "./Board";
+import "materialize-css/dist/css/materialize.min.css";
+import M from "materialize-css";
 import './index.css';
 
 class Game extends React.Component {
@@ -110,15 +112,16 @@ class Game extends React.Component {
   }
 
   render() {
-    const className = "board";
     return(
-      <div className={className}>
-        <Board tiles={this.state.tiles} handleClick={this.handleClick} />
+      <div className={"board"}>
         <div className={"info"}>
-          {this.state.isSolved ? "You win" : `you have made ${this.state.steps} moves in ${this.state.time} seconds`}
+          {this.state.isSolved ? "You win" : `Moves: ${this.state.steps} Time: ${this.state.time} seconds`}
         </div>
-        <div className={"new-game"}>
-          <button onClick={() => this.newGame()}>
+        <div className={"tiles"}>
+          <Board tiles={this.state.tiles} handleClick={this.handleClick} />
+        </div>
+        <div className={"buttons"}>
+          <button className={"btn waves-effect waves-light"} onClick={() => this.newGame()}>
             New game
           </button>
         </div>
