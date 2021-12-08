@@ -55,7 +55,6 @@ class Game extends React.Component {
       tiles.push(0);
       return tiles;
     } else {
-      console.log(tiles);
       return this.newTilesSet();
     }
   }
@@ -126,6 +125,8 @@ class Game extends React.Component {
           <button className={"btn waves-effect waves-light"} onClick={() => this.newGame()}>
             New game
           </button>
+          <a className="waves-effect waves-light btn" href="/">go home</a>
+          <a className="waves-effect waves-light btn" href="https://github.com/metkram/reactjs-fifteen-puzzle">github repo</a>
         </div>
       </div>
     );
