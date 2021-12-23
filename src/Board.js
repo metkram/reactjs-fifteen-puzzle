@@ -1,4 +1,3 @@
-import React from "react";
 import Tile from "./Tile";
 
 function Board(props) {
@@ -18,7 +17,7 @@ function Board(props) {
     });
   }
 
-  return(
+  return (
     <div>
       {fillBoard(props.tiles)}
     </div>

@@ -1,49 +1,47 @@
-import React from "react";
+import React, {useState, useEffect} from "react";
 import ReactDOM from "react-dom";
 import Board from "./Board";
 import "materialize-css/dist/css/materialize.min.css";
 import M from "materialize-css";
 import './index.css';
 
-class Game extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      tiles: this.newTilesSet(),
-      steps: 0,
-      time: 0,
-      isSolved: false,
-    };
-    this.handleClick = this.handleClick.bind(this);
-  }
 
-  componentDidMount() {
-    if (sessionStorage.getItem("stateJson")) {
-      const state = JSON.parse(sessionStorage.getItem("stateJson"));
-      this.setState(state);
+function Game(props) {
+  const [tiles, setTiles] = useState(newTilesSet());
+  const [steps, setSteps] = useState(0);
+  const [gameStarted, setGameStarted] = useState(Date.now());
+  const [gameElapsed, setGameElapsed] = useState(getGameTime());
+  const [isSolved, setIsSolved] = useState(false);
+
+  useEffect(() => {
+    if (sessionStorage.getItem("state")) {
+      const state = JSON.parse(sessionStorage.getItem("state"));
+      setTiles(state.tiles);
+      setSteps(state.steps);
+      setGameStarted(state.gameStarted);
+      setIsSolved(state.isSolved);
+    } else {
+      newGame();
     }
-    this.timer = setInterval(() => this.increaseTime(), 1000);
+  }, []);
+
+  useEffect(() => {
+    saveData();
+  }, [tiles, steps, isSolved]);
+
+  useEffect(() => {
+      const timer = setInterval(() => {setGameElapsed(getGameTime())}, 1000);
+      return () => clearInterval(timer);
+  });
+
+  function newGame() {
+    setTiles(newTilesSet());
+    setSteps(0);
+    setGameStarted(Date.now());
+    setIsSolved(false);
   }
 
-  componentDidUpdate() {
-    this.saveData();
-  }
-
-  componentWillUnmount() {
-    clearInterval(this.timer);
-  }
-
-  newGame() {
-    const state = {
-      tiles: this.newTilesSet(),
-      steps: 0,
-      time: 0,
-      isSolved: false,
-    };
-    this.setState(state);
-  }
-
-  newTilesSet() {
+  function newTilesSet() {
     const tiles = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15];
 
     for (let i = 0; i < tiles.length; i++) {
@@ -51,15 +49,15 @@ class Game extends React.Component {
       [tiles[i], tiles[randomIndex]] = [tiles[randomIndex], tiles[i]];
     }
 
-    if (this.isSolvable(tiles)) {
+    if (isSolvable(tiles)) {
       tiles.push(0);
       return tiles;
     } else {
-      return this.newTilesSet();
+      return newTilesSet();
     }
   }
 
-  isSolvable(set) {
+  function isSolvable(set) {
     let result = 0;
     let newSet = [...set.slice(0, 4), ...set.slice(4, 8).reverse(), ...set.slice(8, 12), ...set.slice(12).reverse()];
     for (let i = 1; i < newSet.length; i++) {
@@ -68,29 +66,37 @@ class Game extends React.Component {
     return (result % 2) == 0;
   }
 
-  handleClick(i) {
-    this.changePosition(i);
+  function handleClick(i) {
+    changePosition(i);
   }
 
-  saveData() {
-    const state = JSON.stringify(this.state);
-    sessionStorage.setItem("stateJson", state);
+  function saveData() {
+    const state = {
+      "tiles": tiles,
+      "gameStarted": gameStarted,
+      "steps": steps,
+      "isSolved": isSolved,
+    };
+    sessionStorage.setItem("state", JSON.stringify(state));
   }
 
-  changePosition(number) {
-    const numberSet = this.state.tiles.slice();
+  function changePosition(number) {
+    const numberSet = tiles.slice();
     const zeroPosition = numberSet.indexOf(0);
     const numberPosition = numberSet.indexOf(number);
 
-    if (this.possibleMoves(zeroPosition).includes(numberPosition)) {
+    if (possibleMoves(zeroPosition).includes(numberPosition)) {
       [numberSet[zeroPosition], numberSet[numberPosition]] = [numberSet[numberPosition], numberSet[zeroPosition]];
-      this.setState(state => ({tiles: numberSet, steps: state.steps + 1}));
+      setTiles(numberSet);
+      setSteps(steps + 1);
+      setGameElapsed(getGameTime());
     }
-
-    if (this.checkWin(numberSet)) this.setState({isSolved: true});
+    if (checkWin(numberSet)) {
+      setIsSolved(true);
+    }
   }
 
-  possibleMoves(zero) {
+  function possibleMoves(zero) {
     const set = [
       zero - 4,
       (zero == 3 || zero == 7 || zero == 11) ? -1 : zero + 1,
@@ -101,36 +107,33 @@ class Game extends React.Component {
     return set.filter(number => number >= 0 && number <= 15);
   }
 
-  checkWin(numberSet) {
+  function checkWin(numberSet) {
     const winSet = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 0].join();
     return winSet == numberSet.join();
   }
 
-  increaseTime() {
-    if (this.state.steps) {
-      this.setState(state => ({time: state.time + 1}));
-    }
+  function getGameTime() {
+    return Math.floor((Date.now() - gameStarted)/1000);
   }
 
-  render() {
-    return(
-      <div className={"board"}>
-        <div className={"info"}>
-          {this.state.isSolved ? "You win" : `Moves: ${this.state.steps} Time: ${this.state.time} seconds`}
-        </div>
-        <div className={"tiles"}>
-          <Board tiles={this.state.tiles} handleClick={this.handleClick} />
-        </div>
-        <div className={"buttons"}>
-          <button className={"btn waves-effect waves-light"} onClick={() => this.newGame()}>
-            New game
-          </button>
-          <a className="waves-effect waves-light btn" href="/">go home</a>
-          <a className="waves-effect waves-light btn" href="https://github.com/metkram/reactjs-fifteen-puzzle">github repo</a>
-        </div>
+  return(
+    <div className={"board"}>
+      <div className={"info"}>
+        {isSolved ? "You win" : `Moves: ${steps} Time: ${gameElapsed} seconds`}
       </div>
-    );
-  }
+      <div className={"tiles"}>
+        <Board tiles={tiles} handleClick={handleClick} />
+      </div>
+      <div className={"buttons"}>
+        <button className={"btn waves-effect waves-light"} onClick={() => newGame()}>
+          New game
+        </button>
+        <a className="waves-effect waves-light btn" href="/">go home</a>
+        <a className="waves-effect waves-light btn" href="https://github.com/metkram/reactjs-fifteen-puzzle">github repo</a>
+      </div>
+    </div>
+  );
+
 }
 
 ReactDOM.render(<Game />, document.getElementById('root'));
